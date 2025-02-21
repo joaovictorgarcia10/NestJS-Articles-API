@@ -43,9 +43,14 @@ export class UsersService {
   }
 
   async remove(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    const data: Prisma.UsersUpdateInput = {
+      ...updateUserDto,
+      isDeleted: true,
+    };
+
     return this.prisma.users.update({
-      where: { id, isDeleted: false },
-      data: updateUserDto.isDeleted = true,
+      where: { id },
+      data: data,
     });
   }
 }
