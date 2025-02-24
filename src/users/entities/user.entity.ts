@@ -19,7 +19,7 @@ export class User {
     email: string;
 
     @ApiProperty()
-    isDeleted: boolean;
+    isActive: boolean;
 
     @Exclude()
     password: string;

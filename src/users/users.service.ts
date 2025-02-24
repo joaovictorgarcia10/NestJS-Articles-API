@@ -12,6 +12,21 @@ export class UsersService {
 
   constructor(private readonly prisma: PrismaService) { }
 
+  // Find
+  async findAll(): Promise<User[]> {
+    return await this.prisma.users.findMany({ where: { isActive: true } });
+  }
+
+  async findById(id: number): Promise<User> {
+    return this.prisma.users.findUnique({ where: { id, isActive: true } });
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return this.prisma.users.findUnique({ where: { email, isActive: true } });
+  }
+
+
+  // Create
   async create(createUserDto: CreateUserDto): Promise<User> {
     const data: Prisma.UsersCreateInput = {
       ...createUserDto,
@@ -26,25 +41,21 @@ export class UsersService {
     };
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.prisma.users.findMany({ where: { isDeleted: false } });
-  }
-
-  async findByEmail(email: string): Promise<User> {
-    return this.prisma.users.findUnique({ where: { email, isDeleted: false } });
-  }
-
+  // Update
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     return this.prisma.users.update({
-      where: { id, isDeleted: false },
+      where: { id, isActive: true },
       data: updateUserDto,
     });
   }
 
-  async remove(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  // Delete
+  async remove(id: number): Promise<User> {
+    let user = await this.findById(id);
+
     const data: Prisma.UsersUpdateInput = {
-      ...updateUserDto,
-      isDeleted: true,
+      ...user,
+      isActive: false,
     };
 
     return this.prisma.users.update({
@@ -52,5 +63,4 @@ export class UsersService {
       data: data,
     });
   }
-
 }

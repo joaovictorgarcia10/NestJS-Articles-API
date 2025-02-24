@@ -22,7 +22,6 @@ export class UsersController {
     return await this.userService.findAll();
   }
 
-
   @Patch(':id')
   @ApiCreatedResponse({ type: User })
   async update(
@@ -34,10 +33,8 @@ export class UsersController {
 
   @Delete(':id')
   @ApiOkResponse({ type: User })
-  async remove(@Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return await this.userService.remove(id, updateUserDto);
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return await this.userService.remove(id);
   }
 
 }
