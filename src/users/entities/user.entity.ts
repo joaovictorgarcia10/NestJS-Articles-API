@@ -21,6 +21,6 @@ export class User {
     @ApiProperty()
     isActive: boolean;
 
-    @Exclude()
+    @ApiProperty()
     password: string;
 }
