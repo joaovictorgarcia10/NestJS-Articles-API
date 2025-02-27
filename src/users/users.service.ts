@@ -14,15 +14,32 @@ export class UsersService {
 
   // Find
   async findAll(): Promise<User[]> {
-    return this.prisma.users.findMany({ where: { isActive: true } });
+    const users = await this.prisma.users.findMany({ where: { isActive: true } });
+
+    return users.map((user) => {
+      return {
+        ...user,
+        password: undefined
+      }
+    })
   }
 
   async findByEmail(email: string): Promise<User> {
-    return this.prisma.users.findUnique({ where: { email, isActive: true } });
+    const user = this.prisma.users.findUnique({ where: { email, isActive: true } });
+
+    return {
+      ...user,
+      password: undefined,
+    };
   }
 
   async findById(id: number): Promise<User> {
-    return this.prisma.users.findUnique({ where: { id, isActive: true } });
+    const user = this.prisma.users.findUnique({ where: { id, isActive: true } });
+
+    return {
+      ...user,
+      password: undefined,
+    };
   }
 
   // Create
@@ -42,10 +59,15 @@ export class UsersService {
 
   // Update
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    return this.prisma.users.update({
+    const updatedUser = this.prisma.users.update({
       where: { id, isActive: true },
       data: updateUserDto,
     });
+
+    return {
+      ...updatedUser,
+      password: undefined,
+    };
   }
 
   // Delete
@@ -57,10 +79,15 @@ export class UsersService {
       isActive: false,
     };
 
-    return this.prisma.users.update({
+    const removedUser = this.prisma.users.update({
       where: { id },
       data: data,
     });
+
+    return {
+      ...removedUser,
+      password: undefined
+    }
   }
 
 }

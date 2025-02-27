@@ -18,7 +18,7 @@ export class UsersController {
   constructor(private readonly userService: UsersService) { }
 
   @Get()
-  @Roles(UserRole.user)
+  @Roles(UserRole.admin, UserRole.user)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiOkResponse({ type: [User] })
   async findAll(): Promise<User[]> {
@@ -48,5 +48,4 @@ export class UsersController {
   async remove(@Param('id') id: string): Promise<User> {
     return await this.userService.remove(+id);
   }
-
 }

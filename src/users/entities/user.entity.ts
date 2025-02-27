@@ -22,7 +22,7 @@ export class User {
     @ApiProperty()
     email: string;
 
-    @Exclude()
+    @ApiHideProperty()
     password: string;
 
     @ApiProperty()
