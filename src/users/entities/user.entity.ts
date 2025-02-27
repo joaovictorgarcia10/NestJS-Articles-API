@@ -1,6 +1,7 @@
 
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { UserRole } from "@prisma/client";
+import { Exclude } from "class-transformer";
 
 export class User {
     @ApiProperty()
@@ -13,15 +14,15 @@ export class User {
     updatedAt: Date;
 
     @ApiProperty()
+    isActive: boolean;
+
+    @ApiProperty()
     name: string;
 
     @ApiProperty()
     email: string;
 
-    @ApiProperty()
-    isActive: boolean;
-
-    @ApiProperty()
+    @Exclude()
     password: string;
 
     @ApiProperty()

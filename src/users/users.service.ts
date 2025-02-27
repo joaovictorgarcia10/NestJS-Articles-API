@@ -13,7 +13,7 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) { }
 
   // Find
-  findAll() {
+  async findAll(): Promise<User[]> {
     return this.prisma.users.findMany({ where: { isActive: true } });
   }
 
@@ -62,4 +62,5 @@ export class UsersService {
       data: data,
     });
   }
+
 }

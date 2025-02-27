@@ -6,7 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
@@ -20,8 +20,9 @@ export class UsersController {
   @Get()
   @Roles(UserRole.user)
   @UseGuards(AuthGuard, RolesGuard)
-  findAll() {
-    return this.userService.findAll();
+  @ApiOkResponse({ type: [User] })
+  async findAll(): Promise<User[]> {
+    return await this.userService.findAll();
   }
 
   @Post()
@@ -35,14 +36,17 @@ export class UsersController {
   @Patch(':id')
   @Roles(UserRole.admin)
   @UseGuards(AuthGuard, RolesGuard)
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  @ApiCreatedResponse({ type: User })
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
     return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
   @Roles(UserRole.admin)
   @UseGuards(AuthGuard, RolesGuard)
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  @ApiResponse({ status: 204, description: 'User successfully deleted.' })
+  async remove(@Param('id') id: string): Promise<User> {
+    return await this.userService.remove(+id);
   }
+
 }
