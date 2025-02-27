@@ -3,6 +3,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -33,5 +34,16 @@ export class AuthService {
 
     async validatePassword(password: string, userPassword: string) {
         return bcrypt.compare(password, userPassword)
+    }
+
+
+    async getDetails(id: number): Promise<User> {
+        const user = await this.usersService.findById(id);
+
+        if (!user) {
+            throw new NotFoundException();
+        }
+
+        return user;
     }
 }

@@ -13,6 +13,10 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) { }
 
   // Find
+  findAll() {
+    return this.prisma.users.findMany({ where: { isActive: true } });
+  }
+
   async findByEmail(email: string): Promise<User> {
     return this.prisma.users.findUnique({ where: { email, isActive: true } });
   }

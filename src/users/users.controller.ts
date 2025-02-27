@@ -1,43 +1,48 @@
 import {
-  Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, Request,
+  Body, Controller, Delete, Get, Patch, Post, UseGuards, Request,
+  Param,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Roles } from 'src/auth/decorators/role.decorator';
+import { UserRole } from '@prisma/client';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('users')
 @ApiTags('users')
 export class UsersController {
   constructor(private readonly userService: UsersService) { }
 
+  @Get()
+  @Roles(UserRole.user)
+  @UseGuards(AuthGuard, RolesGuard)
+  findAll() {
+    return this.userService.findAll();
+  }
+
   @Post()
+  @Roles(UserRole.admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @ApiCreatedResponse({ type: User })
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     return await this.userService.create(createUserDto);
   }
 
-  @Get()
-  @UseGuards(AuthGuard)
-  @ApiCreatedResponse({ type: User })
-  async getDetails(@Request() req): Promise<User> {
-    return await this.userService.findById(req.user.id);
+  @Patch(':id')
+  @Roles(UserRole.admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(+id, updateUserDto);
   }
 
-  @Patch()
-  @UseGuards(AuthGuard)
-  @ApiCreatedResponse({ type: User })
-  async update(@Request() req, @Body() updateUserDto: UpdateUserDto): Promise<User> {
-    return await this.userService.update(req.user.id, updateUserDto);
+  @Delete(':id')
+  @Roles(UserRole.admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  remove(@Param('id') id: string) {
+    return this.userService.remove(+id);
   }
-
-  @Delete()
-  @UseGuards(AuthGuard)
-  @ApiOkResponse({ type: User })
-  async remove(@Request() req): Promise<User> {
-    return await this.userService.remove(req.user.id);
-  }
-
 }
