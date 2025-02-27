@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from './guards/auth.guard';
 import { AuthService } from './auth.service';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { User } from 'src/users/entities/user.entity';
 
@@ -18,14 +18,21 @@ export class AuthController {
     constructor(private authService: AuthService) { }
 
     @Post()
-    @ApiCreatedResponse({ type: LoginDto })
-    login(@Body() body: LoginDto) {
-        return this.authService.login(body.email, body.password);
+    @ApiOkResponse({
+        schema: {
+            type: 'object',
+            properties: {
+                access_token: { type: 'string' }
+            }
+        }
+    })
+    async login(@Body() body: LoginDto): Promise<{ access_token: string }> {
+        return await this.authService.login(body.email, body.password);
     }
 
     @Get("detail")
     @UseGuards(AuthGuard)
-    @ApiCreatedResponse({ type: User })
+    @ApiOkResponse({ type: User })
     async getDetails(@Request() req): Promise<User> {
         return await this.authService.getDetails(req.user.id);
     }
