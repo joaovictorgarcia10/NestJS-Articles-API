@@ -8,7 +8,7 @@ import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
-import { Roles } from 'src/auth/decorators/role.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 
