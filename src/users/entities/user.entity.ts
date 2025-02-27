@@ -1,10 +1,10 @@
 
 import { ApiProperty } from "@nestjs/swagger";
-import { Exclude } from "class-transformer";
+import { UserRole } from "@prisma/client";
 
 export class User {
     @ApiProperty()
-    id?: number;
+    id: number;
 
     @ApiProperty()
     createdAt: Date;
@@ -23,4 +23,7 @@ export class User {
 
     @ApiProperty()
     password: string;
+
+    @ApiProperty()
+    role: UserRole;
 }

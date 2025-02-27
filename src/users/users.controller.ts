@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import {
+  Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards, Request,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('users')
 @ApiTags('users')
@@ -17,24 +20,24 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiCreatedResponse({ type: User })
-  async findAll(): Promise<User[]> {
-    return await this.userService.findAll();
+  async getDetails(@Request() req): Promise<User> {
+    return await this.userService.findById(req.user.id);
   }
 
-  @Patch(':id')
+  @Patch()
+  @UseGuards(AuthGuard)
   @ApiCreatedResponse({ type: User })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    return await this.userService.update(id, updateUserDto);
+  async update(@Request() req, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+    return await this.userService.update(req.user.id, updateUserDto);
   }
 
-  @Delete(':id')
+  @Delete()
+  @UseGuards(AuthGuard)
   @ApiOkResponse({ type: User })
-  async remove(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.userService.remove(id);
+  async remove(@Request() req): Promise<User> {
+    return await this.userService.remove(req.user.id);
   }
 
 }

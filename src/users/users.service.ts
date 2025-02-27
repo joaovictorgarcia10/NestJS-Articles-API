@@ -13,18 +13,13 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) { }
 
   // Find
-  async findAll(): Promise<User[]> {
-    return await this.prisma.users.findMany({ where: { isActive: true } });
+  async findByEmail(email: string): Promise<User> {
+    return this.prisma.users.findUnique({ where: { email, isActive: true } });
   }
 
   async findById(id: number): Promise<User> {
     return this.prisma.users.findUnique({ where: { id, isActive: true } });
   }
-
-  async findByEmail(email: string): Promise<User> {
-    return this.prisma.users.findUnique({ where: { email, isActive: true } });
-  }
-
 
   // Create
   async create(createUserDto: CreateUserDto): Promise<User> {
