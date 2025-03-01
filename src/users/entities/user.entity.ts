@@ -1,8 +1,7 @@
 
 import { ApiHideProperty, ApiProperty } from "@nestjs/swagger";
 import { UserRole } from "@prisma/client";
-import { Exclude } from "class-transformer";
-
+ 
 export class User {
     @ApiProperty()
     id: number;

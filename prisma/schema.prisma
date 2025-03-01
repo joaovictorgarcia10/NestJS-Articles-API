@@ -18,7 +18,8 @@ enum UserRole {
   user
 }
 
-model Users {
+// Models
+model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
@@ -27,4 +28,41 @@ model Users {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   isActive  Boolean  @default(true)
+
+  // An user can have multiple articles
+  Article Article[]
+}
+
+model Article {
+  id          Int      @id @default(autoincrement())
+  title       String   @unique
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // An article belongs to an user
+  authorId Int
+  author   User @relation(fields: [authorId], references: [id])
+
+  // An article can have multiple categories
+  ArticleCategory ArticleCategory[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  title String @unique
+
+  // A category can have multiple articles
+  ArticleCategory ArticleCategory[]
+}
+
+// Many-to-many relation between Article and Category requires a join table
+model ArticleCategory {
+  articleId Int
+  article   Article @relation(fields: [articleId], references: [id])
+
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([articleId, categoryId])
 }

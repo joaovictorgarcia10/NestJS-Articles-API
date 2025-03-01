@@ -18,6 +18,12 @@ export class RolesGuard implements CanActivate {
         }
 
         const { user } = context.switchToHttp().getRequest();
+
+        // TODO: Avaliar se é a melhor estratégia para verificar se o usuário é admin
+        if (user.role === UserRole.admin) {
+            return true;
+        }
+
         return requiredRoles.some((role) => user.role?.includes(role));
     }
 }

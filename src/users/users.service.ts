@@ -14,7 +14,7 @@ export class UsersService {
 
   // Find
   async findAll(): Promise<User[]> {
-    const users = await this.prisma.users.findMany({ where: { isActive: true } });
+    const users = await this.prisma.user.findMany({ where: { isActive: true } });
 
     return users.map((user) => {
       return {
@@ -25,7 +25,7 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User> {
-    const user = this.prisma.users.findUnique({ where: { email, isActive: true } });
+    const user = this.prisma.user.findUnique({ where: { email, isActive: true } });
 
     return {
       ...user,
@@ -34,7 +34,7 @@ export class UsersService {
   }
 
   async findById(id: number): Promise<User> {
-    const user = this.prisma.users.findUnique({ where: { id, isActive: true } });
+    const user = this.prisma.user.findUnique({ where: { id, isActive: true } });
 
     return {
       ...user,
@@ -44,12 +44,12 @@ export class UsersService {
 
   // Create
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const data: Prisma.UsersCreateInput = {
+    const data: Prisma.UserCreateInput = {
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
     };
 
-    const createdUser = await this.prisma.users.create({ data });
+    const createdUser = await this.prisma.user.create({ data });
 
     return {
       ...createdUser,
@@ -59,7 +59,7 @@ export class UsersService {
 
   // Update
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const updatedUser = this.prisma.users.update({
+    const updatedUser = this.prisma.user.update({
       where: { id, isActive: true },
       data: updateUserDto,
     });
@@ -74,12 +74,12 @@ export class UsersService {
   async remove(id: number): Promise<User> {
     let user = await this.findById(id);
 
-    const data: Prisma.UsersUpdateInput = {
+    const data: Prisma.UserUpdateInput = {
       ...user,
       isActive: false,
     };
 
-    const removedUser = this.prisma.users.update({
+    const removedUser = this.prisma.user.update({
       where: { id },
       data: data,
     });
