@@ -14,44 +14,44 @@ import { Article } from './entities/article.entity';
 export class ArticlesController {
   constructor(private readonly articlesService: ArticlesService) { }
 
+  @Post()
+  @Roles(UserRole.user)
+  @UseGuards(AuthGuard, RolesGuard)
+  @ApiCreatedResponse({ type: Article })
+  async create(@Request() req, @Body() createArticleDto: CreateArticleDto): Promise<Article> {
+    return await this.articlesService.create(req.user.id, createArticleDto);
+  }
+
   @Get()
   @Roles(UserRole.user)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiOkResponse({ type: [Article] })
-  findAll(@Request() req): Promise<Article[]> {
-    return this.articlesService.findAll(req.user.id);
+  async findAll(@Request() req): Promise<Article[]> {
+    return await this.articlesService.findAll(req.user.id);
   }
 
   @Get(':id')
   @Roles(UserRole.user)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiOkResponse({ type: Article })
-  findOne(@Request() req, @Param('id') id: string): Promise<Article> {
-    return this.articlesService.findOne(req.user.id, +id);
+  async findOne(@Request() req, @Param('id') id: string): Promise<Article> {
+    return await this.articlesService.findOne(req.user.id, +id);
   }
 
-  @Post()
+
+  @Patch(':articleId')
   @Roles(UserRole.user)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiCreatedResponse({ type: Article })
-  create(@Request() req, @Body() createArticleDto: CreateArticleDto): Promise<Article> {
-    return this.articlesService.create(req.user.id, createArticleDto);
-  }
-
-  @Patch(':id')
-  @Roles(UserRole.user)
-  @UseGuards(AuthGuard, RolesGuard)
-  @ApiCreatedResponse({ type: Article })
-
-  update(@Param('id') id: string, @Body() updateArticleDto: UpdateArticleDto): Promise<Article> {
-    return this.articlesService.update(+id, updateArticleDto);
+  async update(@Request() req, @Param('articleId') articleId: string, @Body() updateArticleDto: UpdateArticleDto) {
+    return await this.articlesService.update(req.user.id, +articleId, updateArticleDto);
   }
 
   @Delete(':id')
   @Roles(UserRole.user)
   @UseGuards(AuthGuard, RolesGuard)
   @ApiResponse({ status: 204, description: 'Article successfully deleted.' })
-  remove(@Param('id') id: string): Promise<Article> {
-    return this.articlesService.remove(+id);
+  async remove(@Param('id') id: string): Promise<Article> {
+    return await this.articlesService.remove(+id);
   }
 }

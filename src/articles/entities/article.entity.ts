@@ -22,4 +22,7 @@ export class Article {
 
     @ApiProperty()
     authorId: number;
+
+    @ApiProperty()
+    ArticleCategory: Object[];
 }

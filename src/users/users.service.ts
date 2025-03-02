@@ -12,6 +12,21 @@ export class UsersService {
 
   constructor(private readonly prisma: PrismaService) { }
 
+  // Create
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const data: Prisma.UserCreateInput = {
+      ...createUserDto,
+      password: await bcrypt.hash(createUserDto.password, 10),
+    };
+
+    const createdUser = await this.prisma.user.create({ data });
+
+    return {
+      ...createdUser,
+      password: undefined,
+    };
+  }
+
   // Find
   async findAll(): Promise<User[]> {
     const users = await this.prisma.user.findMany({ where: { isActive: true } });
@@ -38,21 +53,6 @@ export class UsersService {
 
     return {
       ...user,
-      password: undefined,
-    };
-  }
-
-  // Create
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const data: Prisma.UserCreateInput = {
-      ...createUserDto,
-      password: await bcrypt.hash(createUserDto.password, 10),
-    };
-
-    const createdUser = await this.prisma.user.create({ data });
-
-    return {
-      ...createdUser,
       password: undefined,
     };
   }

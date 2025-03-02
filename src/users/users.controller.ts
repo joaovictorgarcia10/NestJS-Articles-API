@@ -17,6 +17,14 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 export class UsersController {
   constructor(private readonly userService: UsersService) { }
 
+  @Post()
+  // @Roles(UserRole.admin)
+  // @UseGuards(AuthGuard, RolesGuard)
+  @ApiCreatedResponse({ type: User })
+  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return await this.userService.create(createUserDto);
+  }
+
   @Get()
   @Roles(UserRole.admin, UserRole.user)
   @UseGuards(AuthGuard, RolesGuard)
@@ -25,13 +33,6 @@ export class UsersController {
     return await this.userService.findAll();
   }
 
-  @Post()
-  // @Roles(UserRole.admin)
-  // @UseGuards(AuthGuard, RolesGuard)
-  @ApiCreatedResponse({ type: User })
-  async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-    return await this.userService.create(createUserDto);
-  }
 
   @Patch(':id')
   @Roles(UserRole.admin)

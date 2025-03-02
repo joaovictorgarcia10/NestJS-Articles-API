@@ -6,4 +6,7 @@ export class CreateArticleDto {
 
     @IsString()
     description: string;
+
+    @IsNumber({}, { each: true })
+    ArticleCategory: number[];
 }
