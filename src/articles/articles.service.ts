@@ -54,18 +54,20 @@ export class ArticlesService {
   // Update
   async update(authorId: number, articleId: number, updateArticleDto: UpdateArticleDto): Promise<Article> {
     // Delete existing ArticleCategory connections
-    await this.prisma.articleCategory.deleteMany({
-      where: {
-        articleId: articleId,
-      },
-    });
+    if (updateArticleDto.ArticleCategory) {
+      await this.prisma.articleCategory.deleteMany({
+        where: {
+          articleId: articleId,
+        },
+      });
+    }
 
     // Update the article
     const data: Prisma.ArticleUpdateInput = {
       ...updateArticleDto,
       author: { connect: { id: authorId } },
       ArticleCategory: {
-        create: updateArticleDto.ArticleCategory.map((categoryId) => ({
+        create: updateArticleDto.ArticleCategory?.map((categoryId) => ({
           category: { connect: { id: categoryId } },
         })),
       },
