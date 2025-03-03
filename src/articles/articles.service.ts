@@ -53,8 +53,10 @@ export class ArticlesService {
 
   // Update
   async update(authorId: number, articleId: number, updateArticleDto: UpdateArticleDto): Promise<Article> {
-    // Delete existing ArticleCategory connections
+
+    // If ArticleCategory is provided in the request
     if (updateArticleDto.ArticleCategory) {
+      // Delete existing ArticleCategory connections
       await this.prisma.articleCategory.deleteMany({
         where: {
           articleId: articleId,
