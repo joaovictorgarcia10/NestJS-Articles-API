@@ -15,26 +15,44 @@ export class CategoriesService {
       ...createCategoryDto,
     };
 
-    return await this.prisma.category.create({ data });
+    const createdCategory = await this.prisma.category.create({ data });
+
+    return {
+      ...createdCategory,
+    }
   }
 
   // Find
   async findAll(): Promise<Category[]> {
-    return await this.prisma.category.findMany();
+    const categories = await this.prisma.category.findMany();
+
+    return categories.map((category) => {
+      return {
+        ...category,
+      };
+    });
   }
 
   // Update
   async update(id: number, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-    return await this.prisma.category.update({
+    const updatedCategory = await this.prisma.category.update({
       where: { id },
       data: updateCategoryDto,
     });
+
+    return {
+      ...updatedCategory,
+    }
   }
 
   // Remove
   async remove(id: number): Promise<Category> {
-    return await this.prisma.category.delete({
+    const removedCategory = await this.prisma.category.delete({
       where: { id },
     });
+
+    return {
+      ...removedCategory,
+    }
   }
 }

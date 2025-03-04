@@ -21,39 +21,52 @@ export class ArticlesService {
       },
     };
 
-    return await this.prisma.article.create({
+    const createdArticle = await this.prisma.article.create({
       data,
       include: {
         author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
+
+    return {
+      ...createdArticle,
+    }
   }
 
   // Find
   async findAll(authorId: number): Promise<Article[]> {
-    return await this.prisma.article.findMany({
+    const articles = await this.prisma.article.findMany({
       where: { authorId: authorId },
       include: {
         author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
+
+    return articles.map((article) => {
+      return {
+        ...article,
+      };
+    });
   }
 
   async findOne(authorId: number, articleId: number): Promise<Article> {
-    return await this.prisma.article.findUnique({
+    const article = await this.prisma.article.findUnique({
       where: { id: articleId, authorId: authorId },
       include: {
         author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
+
+    return {
+      ...article,
+    };
   }
 
   // Update
   async update(authorId: number, articleId: number, updateArticleDto: UpdateArticleDto): Promise<Article> {
-
     // If ArticleCategory is provided in the request
     if (updateArticleDto.ArticleCategory) {
       // Delete existing ArticleCategory connections
@@ -75,7 +88,7 @@ export class ArticlesService {
       },
     };
 
-    return await this.prisma.article.update({
+    const updatedArticle = await this.prisma.article.update({
       where: { id: articleId },
       data: data,
       include: {
@@ -83,6 +96,11 @@ export class ArticlesService {
         ArticleCategory: { include: { category: true } },
       },
     });
+
+
+    return {
+      ...updatedArticle,
+    };
   }
 
   // Delete
@@ -95,12 +113,16 @@ export class ArticlesService {
     });
 
     // Delete the article
-    return await this.prisma.article.delete({
+    const removedArticle = await this.prisma.article.delete({
       where: { id: articleId },
       include: {
         author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
+
+    return {
+      ...removedArticle,
+    };
   }
 }
