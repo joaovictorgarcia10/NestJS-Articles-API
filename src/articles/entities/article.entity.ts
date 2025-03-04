@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { Category } from "src/categories/entities/category.entity";
 import { User } from "src/users/entities/user.entity";
 
 export class Article {
@@ -18,11 +19,5 @@ export class Article {
     updatedAt: Date;
 
     @ApiProperty()
-    author: User;
-
-    @ApiProperty()
-    authorId: number;
-
-    @ApiProperty()
-    ArticleCategory: Object[];
+    categories: Category[];
 }

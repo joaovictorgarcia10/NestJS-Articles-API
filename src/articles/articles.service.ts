@@ -15,7 +15,7 @@ export class ArticlesService {
       ...createArticleDto,
       author: { connect: { id: authorId } },
       ArticleCategory: {
-        create: createArticleDto.ArticleCategory.map((categoryId) => ({
+        create: createArticleDto.categories?.map((categoryId) => ({
           category: { connect: { id: categoryId } },
         })),
       },
@@ -24,14 +24,23 @@ export class ArticlesService {
     const createdArticle = await this.prisma.article.create({
       data,
       include: {
-        author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
 
     return {
-      ...createdArticle,
-    }
+      id: createdArticle.id,
+      title: createdArticle.title,
+      description: createdArticle.description,
+      createdAt: createdArticle.createdAt,
+      updatedAt: createdArticle.updatedAt,
+      categories: createdArticle.ArticleCategory.map((articleCategory) => {
+        return {
+          id: articleCategory.category.id,
+          title: articleCategory.category.title,
+        }
+      }),
+    };
   }
 
   // Find
@@ -39,14 +48,23 @@ export class ArticlesService {
     const articles = await this.prisma.article.findMany({
       where: { authorId: authorId },
       include: {
-        author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
 
     return articles.map((article) => {
       return {
-        ...article,
+        id: article.id,
+        title: article.title,
+        description: article.description,
+        createdAt: article.createdAt,
+        updatedAt: article.updatedAt,
+        categories: article.ArticleCategory.map((articleCategory) => {
+          return {
+            id: articleCategory.category.id,
+            title: articleCategory.category.title,
+          }
+        }),
       };
     });
   }
@@ -55,21 +73,30 @@ export class ArticlesService {
     const article = await this.prisma.article.findUnique({
       where: { id: articleId, authorId: authorId },
       include: {
-        author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
 
     return {
-      ...article,
+      id: article.id,
+      title: article.title,
+      description: article.description,
+      createdAt: article.createdAt,
+      updatedAt: article.updatedAt,
+      categories: article.ArticleCategory.map((articleCategory) => {
+        return {
+          id: articleCategory.category.id,
+          title: articleCategory.category.title,
+        }
+      }),
     };
   }
 
   // Update
   async update(authorId: number, articleId: number, updateArticleDto: UpdateArticleDto): Promise<Article> {
-    // If ArticleCategory is provided in the request
-    if (updateArticleDto.ArticleCategory) {
-      // Delete existing ArticleCategory connections
+    // If categories property is provided in the request
+    if (updateArticleDto.categories) {
+      // Delete existing categories connections
       await this.prisma.articleCategory.deleteMany({
         where: {
           articleId: articleId,
@@ -79,10 +106,11 @@ export class ArticlesService {
 
     // Update the article
     const data: Prisma.ArticleUpdateInput = {
-      ...updateArticleDto,
+      title: updateArticleDto.title,
+      description: updateArticleDto.description,
       author: { connect: { id: authorId } },
       ArticleCategory: {
-        create: updateArticleDto.ArticleCategory?.map((categoryId) => ({
+        create: updateArticleDto.categories?.map((categoryId) => ({
           category: { connect: { id: categoryId } },
         })),
       },
@@ -92,14 +120,22 @@ export class ArticlesService {
       where: { id: articleId },
       data: data,
       include: {
-        author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
 
-
     return {
-      ...updatedArticle,
+      id: updatedArticle.id,
+      title: updatedArticle.title,
+      description: updatedArticle.description,
+      createdAt: updatedArticle.createdAt,
+      updatedAt: updatedArticle.updatedAt,
+      categories: updatedArticle.ArticleCategory.map((articleCategory) => {
+        return {
+          id: articleCategory.category.id,
+          title: articleCategory.category.title,
+        }
+      }),
     };
   }
 
@@ -116,13 +152,22 @@ export class ArticlesService {
     const removedArticle = await this.prisma.article.delete({
       where: { id: articleId },
       include: {
-        author: true,
         ArticleCategory: { include: { category: true } },
       },
     });
 
     return {
-      ...removedArticle,
+      id: removedArticle.id,
+      title: removedArticle.title,
+      description: removedArticle.description,
+      createdAt: removedArticle.createdAt,
+      updatedAt: removedArticle.updatedAt,
+      categories: removedArticle.ArticleCategory.map((articleCategory) => {
+        return {
+          id: articleCategory.category.id,
+          title: articleCategory.category.title,
+        }
+      }),
     };
   }
 }

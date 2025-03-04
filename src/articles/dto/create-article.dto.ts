@@ -8,5 +8,5 @@ export class CreateArticleDto {
     description: string;
 
     @IsNumber({}, { each: true })
-    ArticleCategory: number[];
+    categories: number[];
 }
