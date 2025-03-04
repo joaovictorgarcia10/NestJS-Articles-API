@@ -18,6 +18,6 @@ export class Article {
     @ApiProperty()
     updatedAt: Date;
 
-    @ApiProperty()
+    @ApiProperty({ type: Number, isArray: true })
     categories: Category[];
 }

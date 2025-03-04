@@ -11,6 +11,6 @@ export class CreateArticleDto {
     description: string;
 
     @IsNumber({}, { each: true })
-    @ApiProperty()
+    @ApiProperty({ type: Number, isArray: true })
     categories: number[];
 }
